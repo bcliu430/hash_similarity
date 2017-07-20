@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define debug printf("%s", "[DEBUG]: " );
-#define PAGE_SIZE 1024
+#define PAGE_SIZE 4096
 static unsigned long hashed, actual, zeros, total;
 
 void compare(char * F1, char *F2); // compare two mem files
@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
 
   printf("file compared: %s\t%s\n", f1, f2);
   compare(f1, f2);
+  
   debug;
   printf("hashed-total-(hash/total)%% %lu-%lu-%.2f%%\n", hashed, total,
                             100*((float)hashed / total));
@@ -37,13 +38,8 @@ int main(int argc, char *argv[]) {
                             100*((float)actual / total));
   debug;
   printf("zeros: %lu-%.2f%%\n", zeros, 100*((float)zeros / total) );
-  debug;
-  printf("(hashed-zero)-total-((hashed-zeros)/total)%%: %lu-%lu-%.2f%%\n", hashed-zeros, total,
-                            100*((float)(hashed-zeros) / total));
-  debug;
-  printf("(actual-zero)-total-((actual-zeros)/total)%%: %lu-%lu-%.2f%%\n", actual-zeros, total,
-                            100*((float)(actual-zeros) / total));
- 
+
+
   return 0;
 }
 
@@ -108,13 +104,14 @@ void compare(char * F1, char *F2){
 
       fread(tmp1, PAGE_SIZE, 1, fp1);
       fread(tmp2, PAGE_SIZE, 1, fp2);
-      if(isZero(tmp1) && isZero(tmp2)){
-        zeros+=PAGE_SIZE;
-      }
+
       hash1 = hash(tmp1);
       hash2 = hash(tmp2);
 
-      if(hash1 == hash2){
+      if(isZero(tmp1) && isZero(tmp2)){
+        zeros+=PAGE_SIZE;
+      }
+      else if(hash1 == hash2){
         hashed+= PAGE_SIZE;
         actual+= actu(tmp1,tmp2);
       }

@@ -6,6 +6,7 @@ BIN2=redis_withload
 BIN3=nginx_noload
 BIN4=nginx_withload
 PAGE=1
+IP=172.30.13.48
 
 all: main.o
 	$(CC) $(CFLAGS) main.c -o hashsim
@@ -18,3 +19,6 @@ run: all
 
 clean:
 	sudo rm *.o hashsim
+
+install:
+	scp main.c Makefile $(IP):~
